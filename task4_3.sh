@@ -14,8 +14,12 @@ if [ $# -ne 2 ]; then
 fi
 
 if [ ! -d ${BACKUP_DIRECTORY} ]; then
-	echo "Directory ${BACKUP_DIRECTORY} does not exists. Please create it" 1>&2
-	exit 1
+	
+	echo -e "Directory ${BACKUP_DIRECTORY} does not exists. ${Yellow}Installation of directory..${NC}"
+	mkdir -p ${BACKUP_DIRECTORY}
+	## exit case(if directory is not exists)
+	#echo "Directory ${BACKUP_DIRECTORY} does not exists. Please create it" 1>&2
+	#exit 1
 fi
 
 BACKUP_NAME=$(echo $1 | sed s%/%-%g | cut -c 2- )
@@ -30,7 +34,7 @@ if [ ${BACKUP_COUNT} -gt $2 ]; then
 	echo -e "number backups to delete:${Green} $REMBKP ${NC}"
 	ls -1t ${BACKUP_DIRECTORY} | grep "tar.gz" | grep "^${BACKUP_NAME}_"| tail -n $REMBKP | while read line; do
 		echo -e "${Yellow}  rm ${line} ${NC}"
-		rm $line
+		/bin/rm ${BACKUP_DIRECTORY}$line
 	done
 fi
 
