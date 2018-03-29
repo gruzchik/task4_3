@@ -8,9 +8,22 @@ NC='\e[0m'
 
 BACKUP_DIRECTORY="/tmp/backups/"
 
-if [ $# -ne 2 ]; then
-	echo "Number of parameters for script is $# and it is not correct" 1>&2
+if [ $# -lt 2 ]; then
+	echo "ERROR: Number of parameters for script is $# . It is less then 2 and is not correct" 1>&2
 	exit 1
+fi
+
+if [ $# -gt 2 ]; then
+        echo "ERROR: Number of parameters for script is $# . It is more then 2 and is not correct" 1>&2
+        exit 1
+fi
+
+if [ "$2" -eq "$2" ] 2>/dev/null
+then
+    echo "$2 is an integer !!"
+else
+    echo "ERROR: Second parameter must be an integer." 1>&2
+    exit 1
 fi
 
 if [ ! -d ${BACKUP_DIRECTORY} ]; then
@@ -38,10 +51,12 @@ if [ ${BACKUP_COUNT} -gt $2 ]; then
 	done
 fi
 
-echo "tar -czf ${BACKUP_DIRECTORY}${BACKUP_NAME}_$(date '+%d.%m.%Y_%T').tar.gz ${1}"
-tar -czf ${BACKUP_DIRECTORY}${BACKUP_NAME}_$(date '+%d.%m.%Y_%T').tar.gz ${1}
+BACK_FOLDER=$(echo ${1})
+echo "tar -czf ${BACKUP_DIRECTORY}${BACKUP_NAME}_$(date '+%d.%m.%Y_%T').tar.gz ${BACK_FOLDER}"
+tar -czf "${BACKUP_DIRECTORY}${BACKUP_NAME}_$(date '+%d.%m.%Y_%T')".tar.gz "${BACK_FOLDER}"
 if [ $? != 0 ]; then
-	echo -e "${Red} Backup does not created complete.${NC} Please check"
+	echo -e "${Red} Backup does not created complete.${NC} Please check input parametres" 1>&2
+	exit 1
 else
 	echo -e "${Green} Backup complete! ${NC}"
 fi
